@@ -25,7 +25,7 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
         this.entries = new Entry[initialCapacity];
     }
 
-    private int hash(K key) {
+    private int hash(Object key) {
         int h = key.hashCode() >>> 1;
         return h & (capacity);
     }
@@ -36,7 +36,6 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
         int hash = hash(key);
 
         Entry<K, V> entry = entries[hash];
-
         while (entry != null) {
             if (entry.key.equals(key)) {
                 V old_value = entry.value;
@@ -64,11 +63,32 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
+        int hash = hash(key);
+
+        Entry<K, V> entry = entries[hash];
+        while (entry != null) {
+            if (entry.key.equals(key)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     @Override
     public boolean containsValue(Object value) {
+        Entry<K, V> entry;
+
+        for (int i = 0; i < entries.length; i++) {
+            entry = entries[i];
+            while (entry != null) {
+                if (entry.value.equals(value))
+                    return true;
+
+                entry = entry.next;
+            }
+        }
+
         return false;
     }
 

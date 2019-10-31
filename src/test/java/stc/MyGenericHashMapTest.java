@@ -42,10 +42,22 @@ public class MyGenericHashMapTest {
 
     @Test
     public void containsKey() {
+        String key = "key";
+        String value = "value";
+        assertEquals(h.containsKey(key), gh.containsKey(key));
+
+        assertEquals(h.put(key, value), gh.put(key, value));
+        assertEquals(h.containsKey(key), gh.containsKey(key));
     }
 
     @Test
     public void containsValue() {
+        String key = "key";
+        String value = "value";
+        assertEquals(h.containsValue(key), gh.containsValue(key));
+
+        assertEquals(h.put(key, value), gh.put(key, value));
+        assertEquals(h.containsValue(key), gh.containsValue(key));
     }
 
     @Test
