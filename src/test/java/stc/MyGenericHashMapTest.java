@@ -38,6 +38,14 @@ public class MyGenericHashMapTest {
 
     @Test
     public void get() {
+        String key = "key";
+        String value = "value";
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.get(key), gh.get(key));
+
+        String new_value = "new_value";
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.get(key), gh.get(key));
     }
 
     @Test
@@ -46,7 +54,7 @@ public class MyGenericHashMapTest {
         String value = "value";
         assertEquals(h.containsKey(key), gh.containsKey(key));
 
-        assertEquals(h.put(key, value), gh.put(key, value));
+        h.put(key, value); gh.put(key, value);
         assertEquals(h.containsKey(key), gh.containsKey(key));
     }
 
@@ -62,6 +70,7 @@ public class MyGenericHashMapTest {
 
     @Test
     public void size() {
+
     }
 
     @Test
@@ -84,6 +93,12 @@ public class MyGenericHashMapTest {
     // delete
     @Test
     public void remove() {
+        String key = "key";
+        String value = "value";
+        assertEquals(h.remove(key), gh.remove(key)); // should be null
+
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.remove(key), gh.remove(key)); // should be value
     }
 
     @Test

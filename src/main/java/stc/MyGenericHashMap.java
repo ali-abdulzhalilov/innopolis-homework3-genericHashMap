@@ -58,21 +58,21 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
     // read
     @Override
     public V get(Object key) {
-        return null;
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
         int hash = hash(key);
 
         Entry<K, V> entry = entries[hash];
         while (entry != null) {
             if (entry.key.equals(key)) {
-                return true;
+                return entry.value;
             }
         }
 
-        return false;
+        return null;
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return get(key) != null;
     }
 
     @Override
@@ -121,6 +121,20 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
     // delete
     @Override
     public V remove(Object key) {
+        Entry<K, V> entry = entries[hash(key)];
+        Entry<K, V> prev_entry = null;
+
+        while (entry != null){
+            if (entry.key.equals(key)) {
+                if (prev_entry == null) entries[hash(key)] = entry.next;
+                else prev_entry.next = entry.next;
+                return entry.value;
+            }
+
+            prev_entry = entry;
+            entry = entry.next;
+        }
+
         return null;
     }
 
