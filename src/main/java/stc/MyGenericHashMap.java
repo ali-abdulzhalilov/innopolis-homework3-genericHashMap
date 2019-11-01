@@ -27,7 +27,7 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
 
     private int hash(Object key) {
         int h = key.hashCode() >>> 1;
-        return h & (capacity);
+        return h & (capacity-1);
     }
 
     // create/update
@@ -40,12 +40,13 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
             if (entry.key.equals(key)) {
                 V old_value = entry.value;
                 entry.value = value;
-                return value;
+                return old_value;
             }
+            entry = entry.next;
         }
 
-        entry = new Entry<K, V>(key, value);
-        addEntry(entry, entries, hash);
+        Entry<K, V> new_entry = new Entry<K, V>(key, value);
+        addEntry(new_entry, entries, hash);
         return null;
     }
 
@@ -94,12 +95,12 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     @Override
@@ -128,6 +129,7 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
             if (entry.key.equals(key)) {
                 if (prev_entry == null) entries[hash(key)] = entry.next;
                 else prev_entry.next = entry.next;
+                size--;
                 return entry.value;
             }
 
@@ -140,7 +142,9 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
 
     @Override
     public void clear() {
-
+        for (int i = 0; i < entries.length; i++)
+            entries[i] = null;
+        size = 0;
     }
     // ------
 
@@ -153,27 +157,49 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
     private Entry<K, V> addEntry(Entry<K, V> entry, Entry<K, V>[] bucketList, int hashIndex) {
         if (entry == null || bucketList == null) return null;
 
-        if (bucketList[hashIndex] == null) {
-            bucketList[hashIndex] = entry;
-            return null;
+        Entry<K, V> curEntry = bucketList[hashIndex];
+        Entry<K, V> prevEntry = null;
+        while (curEntry != null) {
+            prevEntry = curEntry;
+            curEntry = curEntry.next;
         }
 
-        Entry<K, V> curEntry = bucketList[hashIndex];
-        while (curEntry != null)
-            curEntry = curEntry.next;
+        if (prevEntry != null)
+            prevEntry.next = entry;
+        else
+            bucketList[hashIndex] = entry;
 
-        curEntry.next = entry;
         size++;
-        return curEntry;
+        return prevEntry;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(super.toString()).append(" ").append(size()).append('/').append(capacity).append('\n');
+
+        Entry<K, V> entry;
+        for (int i = 0; i < entries.length; i++) {
+            entry = entries[i];
+            if (entry == null) continue;
+
+            s.append("| ");
+            while (entry != null) {
+                s.append(entry).append(" ");
+                entry = entry.next;
+            }
+            s.append('\n');
+        }
+
+        return s.toString();
+    }
 
     // -----
 
     private class Entry<K, V> implements Map.Entry<K, V> {
         private K key;
         private V value;
-        private Entry next;
+        private Entry<K, V> next;
 
         private Entry(K key, V value) {
             this.key = key;
@@ -202,9 +228,14 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
         }
 
         public Entry<K, V> setNext(Entry<K, V> next) {
-            Entry old_next = this.next;
+            Entry<K, V> old_next = this.next;
             this.next = next;
             return old_next;
+        }
+
+        @Override
+        public String toString() {
+            return "["+key+":"+value+"]";
         }
     }
 }

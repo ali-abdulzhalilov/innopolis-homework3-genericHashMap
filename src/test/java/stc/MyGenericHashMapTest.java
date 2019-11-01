@@ -1,5 +1,6 @@
 package stc;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +17,11 @@ public class MyGenericHashMapTest {
     public void setUp() throws Exception {
         h = new HashMap<>();
         gh = new MyGenericHashMap<>();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
     }
 
     // create/update
@@ -64,17 +70,34 @@ public class MyGenericHashMapTest {
         String value = "value";
         assertEquals(h.containsValue(key), gh.containsValue(key));
 
-        assertEquals(h.put(key, value), gh.put(key, value));
+        h.put(key, value); gh.put(key, value);
         assertEquals(h.containsValue(key), gh.containsValue(key));
     }
 
     @Test
     public void size() {
+        String key = "key";
+        String value = "value";
+        assertEquals(h.size(), gh.size()); // should be 0
 
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.size(), gh.size()); // should be 1
+
+        h.remove(key); gh.remove(key);
+        assertEquals(h.size(), gh.size()); // should be 0
     }
 
     @Test
     public void isEmpty() {
+        String key = "key";
+        String value = "value";
+        assertEquals(h.isEmpty(), gh.isEmpty()); // should be true
+
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.isEmpty(), gh.isEmpty()); // should be false
+
+        h.clear(); gh.clear();
+        assertEquals(h.isEmpty(), gh.isEmpty()); // should be true
     }
 
     @Test
@@ -98,11 +121,25 @@ public class MyGenericHashMapTest {
         assertEquals(h.remove(key), gh.remove(key)); // should be null
 
         h.put(key, value); gh.put(key, value);
+        assertEquals(h.get(key), gh.get(key)); // should be value
         assertEquals(h.remove(key), gh.remove(key)); // should be value
+        assertEquals(h.get(key), gh.get(key)); // should be null
     }
 
     @Test
     public void clear() {
+        String key = "key";
+        String value = "value";
+
+        assertEquals(h.size(), gh.size()); // should be 0
+
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.get(key), gh.get(key)); // should be "value"
+        assertEquals(h.size(), gh.size()); // should be 1
+
+        h.clear(); gh.clear();
+        assertEquals(h.get(key), gh.get(key)); // should be null
+        assertEquals(h.size(), gh.size()); // should be 0
     }
     // ------
 }

@@ -1,9 +1,17 @@
 package stc;
 
-public class App 
+import java.util.HashMap;
+
+public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        MyGenericHashMap<String, Integer> gh = new MyGenericHashMap<>();
+
+        for (int i = 0; i < 100; i++) {
+            gh.put(i+"", i);
+        }
+
+        System.out.println(gh);
     }
 }
