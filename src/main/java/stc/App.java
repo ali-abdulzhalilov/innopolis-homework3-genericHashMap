@@ -6,12 +6,11 @@ public class App
 {
     public static void main( String[] args )
     {
-        MyGenericHashMap<String, Integer> gh = new MyGenericHashMap<>();
+        MyGenericHashMap<Integer, Integer> gh = new MyGenericHashMap<>();
 
-        for (int i = 0; i < 100; i++) {
-            gh.put(i+"", i);
+        for (int i = 0; i < 20; i++) {
+            gh.put(i, i+1);
         }
-
         System.out.println(gh);
     }
 }

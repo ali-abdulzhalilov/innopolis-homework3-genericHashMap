@@ -1,8 +1,6 @@
 package stc;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MyGenericHashMap<K, V> implements Map<K, V> {
     private int size;
@@ -45,14 +43,18 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
             entry = entry.next;
         }
 
-        Entry<K, V> new_entry = new Entry<K, V>(key, value);
-        addEntry(new_entry, entries, hash);
+        addEntry(key, value);
         return null;
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
+    public void putAll(Map<? extends K, ? extends V> m) throws NullPointerException{
+        if (m == null) throw new NullPointerException();
 
+        Set<? extends Map.Entry<? extends K, ? extends V>> set = m.entrySet();
+        for (Map.Entry<? extends K, ? extends V> entry: set) {
+            put(entry.getKey(), entry.getValue());
+        }
     }
     // -------------
 
@@ -66,6 +68,7 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
             if (entry.key.equals(key)) {
                 return entry.value;
             }
+            entry = entry.next;
         }
 
         return null;
@@ -105,17 +108,39 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<K> keySet() {
-        return null;
+        HashSet<K> set = new HashSet<>();
+
+        Set<Map.Entry<K, V>> entrySet = entrySet();
+        for (Map.Entry<K, V> entry : entrySet)
+            set.add(entry.getKey());
+
+        return set;
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        ArrayList<V> values = new ArrayList<V>();
+
+        Set<Map.Entry<K, V>> entrySet = entrySet();
+        for (Map.Entry<K, V> entry : entrySet)
+            values.add(entry.getValue());
+
+        return values;
     }
 
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
-        return null;
+        HashSet<Map.Entry<K, V>> set = new HashSet<>();
+
+        Entry<K, V> entry;
+        for (int i=0; i < entries.length; i++) {
+            entry = entries[i];
+
+            if (entry != null)
+                set.add(entry);
+        }
+
+        return set;
     }
     // ----
 
@@ -150,11 +175,38 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
 
     // utils
     public void rehash() {
+        Entry<K, V>[] rehashed_entries = new Entry[capacity*2];
 
+        Entry<K, V> entry;
+        for (int i = 0; i < entries.length; i++) {
+            entry = entries[i];
+            while (entry != null) {
+                Entry<K, V> new_entry = new Entry<>(entry.key, entry.value);
+                putEntryInBucket(new_entry, rehashed_entries, hash(new_entry.key));
+
+                entry = entry.next;
+            }
+        }
+
+        entries = rehashed_entries;
+        capacity *= 2;
     }
 
     /* returns previous entry in bucket */
-    private Entry<K, V> addEntry(Entry<K, V> entry, Entry<K, V>[] bucketList, int hashIndex) {
+    private Entry<K, V> addEntry(K key, V value) {
+        if (size > capacity * loadFactor)
+            rehash();
+
+        int hash = hash(key);
+        Entry<K, V> entry = new Entry<>(key, value);
+
+        Entry<K, V> prevEntry = putEntryInBucket(entry, entries, hash);
+
+        size++;
+        return prevEntry;
+    }
+
+    private Entry<K, V> putEntryInBucket(Entry<K, V> entry, Entry<K, V>[] bucketList, int hashIndex) {
         if (entry == null || bucketList == null) return null;
 
         Entry<K, V> curEntry = bucketList[hashIndex];
@@ -169,7 +221,6 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
         else
             bucketList[hashIndex] = entry;
 
-        size++;
         return prevEntry;
     }
 

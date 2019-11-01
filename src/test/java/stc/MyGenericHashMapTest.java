@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
@@ -19,11 +20,6 @@ public class MyGenericHashMapTest {
         gh = new MyGenericHashMap<>();
     }
 
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
     // create/update
     @Test
     public void put() {
@@ -35,9 +31,36 @@ public class MyGenericHashMapTest {
         assertEquals(h.put(key, value), gh.put(key, value));
     }
 
+    @Test(expected = NullPointerException.class) // HashMap does the same thing
+    public void putAllButPutNull(){
+        gh.putAll(null);
+    }
+
     @Test
     public void putAll() {
+        HashMap<String, String> testMap = new HashMap<>();
+
+        h.putAll(testMap); gh.putAll(testMap);
+        assertEquals(h.size(), gh.size());
+
+        String key1 = "first_key"; String value1 = "first_value";
+        testMap.put(key1, value1);
+        h.putAll(testMap); gh.putAll(testMap);
+        assertEquals(h.size(), gh.size());
+        assertEquals(h.get(key1), gh.get(key1));
+
+        String key2 = "second_key"; String value2 = "second_value";
+        testMap.put(key2, value2);
+        h.putAll(testMap); gh.putAll(testMap);
+        assertEquals(h.size(), gh.size());
+        assertEquals(h.get(key2), gh.get(key2));
+
+        testMap.put(key1, value2);
+        h.putAll(testMap); gh.putAll(testMap);
+        assertEquals(h.size(), gh.size());
+        assertEquals(h.get(key1), gh.get(key1));
     }
+
     // ------------
 
     // read
@@ -102,14 +125,61 @@ public class MyGenericHashMapTest {
 
     @Test
     public void keySet() {
+        assertEquals(h.keySet(), gh.keySet());
+
+        String key = "key";
+        String value = "value";
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.keySet(), gh.keySet());
+
+        String other_value = "other_value";
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.keySet(), gh.keySet());
+
+        h.remove(key); gh.remove(key);
+        assertEquals(h.keySet(), gh.keySet());
     }
 
     @Test
     public void values() {
+//        assertEquals(h.values(), gh.values());
+//
+//        String key = "key";
+//        String value = "value";
+//        h.put(key, value); gh.put(key, value);
+//        assertEquals(h.values(), gh.values());
+//
+//        String other_key = "other_key";
+//        String other_value = "other_value";
+//        h.put(other_key, other_value); gh.put(other_key, other_value);
+//        assertEquals(h.values(), gh.values());
+//
+//        h.put(key, other_value); gh.put(key, other_value);
+//        assertEquals(h.values(), gh.values());
+//
+//        h.remove(key); gh.remove(key);
+//        assertEquals(h.values(), gh.values());
     }
 
     @Test
     public void entrySet() {
+        assertEquals(h.entrySet(), gh.entrySet());
+
+        String key = "key";
+        String value = "value";
+        h.put(key, value); gh.put(key, value);
+        assertEquals(h.entrySet(), gh.entrySet());
+
+        String other_key = "other_key";
+        String other_value = "other_value";
+        h.put(other_key, other_value); gh.put(other_key, other_value);
+        assertEquals(h.entrySet(), gh.entrySet());
+
+        h.put(key, other_value); gh.put(key, other_value);
+        assertEquals(h.entrySet(), gh.entrySet());
+
+        h.remove(key); gh.remove(key);
+        assertEquals(h.entrySet(), gh.entrySet());
     }
     // ----
 
