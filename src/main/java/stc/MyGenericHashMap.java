@@ -119,7 +119,7 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-        ArrayList<V> values = new ArrayList<V>();
+        List<V> values = new ArrayList<V>();
 
         Set<Map.Entry<K, V>> entrySet = entrySet();
         for (Map.Entry<K, V> entry : entrySet)
@@ -136,8 +136,10 @@ public class MyGenericHashMap<K, V> implements Map<K, V> {
         for (int i=0; i < entries.length; i++) {
             entry = entries[i];
 
-            if (entry != null)
+            while (entry != null) {
                 set.add(entry);
+                entry = entry.next;
+            }
         }
 
         return set;
